@@ -17,8 +17,8 @@ jobs:
         run: |
           MODIFIED=${{ github.event.head_commit.modified }}
           MODIFIED_LINES=$(IFS=$'\n'; echo "${MODIFIED[*]}")
-          MESSAGE=$(echo "new commit by <a href="http://github.com/${{ github.event.pusher.username }}">${{ github.event.pusher.name }}</a> on ${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}!\n\n${{ github.event.head_commit.message }}\n\nmodified:\n$MODIFIED\n\nlink: ${{ github.event.head_commit.url }}" | jq -Rr @html)
+          MESSAGE=$(echo "new commit by <a href="http://github.com/${{ github.event.pusher.username }}">${{ github.event.pusher.name }}</a> on ${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}!\n\n${{ github.event.head_commit.message }}\n\nmodified:\n$MODIFIED_LINES\n\nlink: ${{ github.event.head_commit.url }}" | jq -Rr @html)
           echo $MESSAGE
-          curl -X POST "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendMessage" -d "chat_id=$CHANNEL_ID&text=$MESSAGE"
+          curl -X POST "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendMessage" -d "chat_id=$CHANNEL_ID&parse_mode=HTML&text=$MESSAGE"
 
 
