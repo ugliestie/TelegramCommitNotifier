@@ -15,8 +15,9 @@ jobs:
           TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           CHANNEL_ID: ${{ secrets.TELEGRAM_CHANNEL_ID }}
         run: |
-          MESSAGE=$(echo "New commit! ${{ github.event.head_commit.message }}\nmeow" | jq -Rr @html)
+          MODIFIED=$(IFS='\n'; echo "${${{ github.event.head_commit.modified }}[*]}")
+          MESSAGE=$(echo "new commit by <a href="http://github.com/${{ github.event.pusher.username }}">${{ github.event.pusher.name }}</a> on ${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}!\n\n${{ github.event.head_commit.message }}\n\nmodified:\n$MODIFIED\n\nlink: ${{ github.event.head_commit.url }}" | jq -Rr @html)
           echo $MESSAGE
-          curl -X POST "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendMessage" -d "chat_id=CHANNEL_ID&text=$MESSAGE"
+          curl -X POST "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendMessage" -d "chat_id=$CHANNEL_ID&text=$MESSAGE"
 
 
